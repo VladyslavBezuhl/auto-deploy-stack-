@@ -1,0 +1,10 @@
+groups:
+  - name: alert.rules
+    rules:
+      - alert: HighCpuUsage
+        expr: process_cpu_seconds_total > 0.5 
+        for: 5m 
+        labels:
+          saverity: critical
+        annotations: 
+          summary: "CPU usage is high"

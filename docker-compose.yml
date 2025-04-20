@@ -1,0 +1,73 @@
+
+
+services:
+  # Das ist Traefik Reverse Proxy
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    command: 
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+     ## - "--certificateresolvers.myresolver.acme.httpchallenge=true"
+     ## -"--certificateresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    user: root
+    networks:
+      - web
+
+  # Das ist Prometheus
+  prometheus:
+    image: prom/prometheus:v2.29.2
+    container_name: prometheus
+    volumes: 
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9091:9091"
+    networks:
+      - web
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:8.1.0
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: 'admin'
+    ports:
+      - "3001:3000"
+    networks:
+      - web
+
+  # Flask app 1
+  app1: 
+    build: ./apps/app1
+    container_name: app1
+    environment:
+      - VIRTUAL_HOST=app1.localhost
+    labels: 
+      - "traefik.enable=true"
+      - "traefik.http.routers.app1.rule=Host(`app1.localhost`)" 
+      - "traefik.http.services.app1.loadbalancer.server.port=5000"
+    networks: 
+      - web
+
+  # Flask app 2
+  app2:
+    build: ./apps/app2
+    container_name: app2
+    environment:
+      - VIRTUAL_HOST=app2.localhost
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app2.rule=Host(`app2.localhost`)"
+      - "traefik.http.services.app2.loadbalancer.server.port=5000"
+    networks:
+      - web
+
+networks:
+  web:
+    external: false

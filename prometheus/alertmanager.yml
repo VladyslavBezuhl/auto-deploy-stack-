@@ -1,0 +1,15 @@
+global: 
+  resolve_timeout: 5m 
+
+
+route:
+  receiver: 'telegram-notifications'
+
+
+receivers: 
+  - name: 'telegram-notifications'
+    telegram_configs: 
+      - send_resolved: true
+        api_url: 'https://api.telegram.org'
+        chat_id: '${TELEGRAM_CHAT_ID}'
+        token: '${TELEGRAM_BOT_TOKEN}'
