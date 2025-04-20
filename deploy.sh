@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/jambo2
+cd /your/path
 
 git pull origin main
 
