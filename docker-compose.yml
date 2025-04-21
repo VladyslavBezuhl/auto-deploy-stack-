@@ -31,7 +31,7 @@ services:
     volumes: 
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9091:9091"
+      - "9090:9090"
     networks:
       - web
 
