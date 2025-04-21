@@ -2,7 +2,7 @@ groups:
   - name: alert.rules
     rules: 
       - alert: HighCpuUsage
-        expr: rate(process_cpu_second_total[1m]) > 0.5
+        expr: rate(process_cpu_second_total{instance="traefik:8080", job="docker"}[1m]) > 0.5 #monitoring for last minute alert if cpu > 0.5
         for: 1m 
         labels:
           saverity: critical
