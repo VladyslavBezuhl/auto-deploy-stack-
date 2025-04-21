@@ -9,3 +9,18 @@ groups:
         annotatinons:
           summary: "CPU usage is high"
           description: "Process {{ $labels.instance }} consume a lot of CPU"
+
+
+
+#This alert can be used to check if Telegram alert is working
+#groups:
+  #- name: alert.rules
+    #rules:
+      #- alert: AlwaysFiring
+        #expr: vector(1)
+        #for: 10s
+        #labels:
+          #severity: test
+        #annotations:
+          #summary: "Testing alert"
+          #description: "This alert always works, just to check delivery in Telegram"
