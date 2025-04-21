@@ -5,7 +5,13 @@ entryPoints:
   web:
     address: ":80"
   websecure:
-    address: ":443"  
+    address: ":443" 
+    
+metrics: 
+  prometheus:
+    addEntryPointsLabels: true 
+    addRoutersLabels: true 
+    addServicesLabels: true
 
 providers:
   docker:
