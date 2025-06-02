@@ -24,6 +24,8 @@ services:
     networks:
       - web
 
+
+
   # Das ist Prometheus
   prometheus:
     image: prom/prometheus:v2.29.2
@@ -58,6 +60,14 @@ services:
       - "traefik.http.services.app1.loadbalancer.server.port=5000"
     networks: 
       - web
+
+
+       # указываю среднее кол во лимит запросов ### регулирую лимит запросов 
+      - "traefik.http.middlewares.app1-ratelimit.ratelimit.average=100"
+      - "traefik.http.middlewares.app1-ratelimit.ratelimit.burst=50"
+
+      #подключ middleware к роутеру
+      - "traefik.http.routers.app1.middlewares=app1-ratelimit@docker"
 
   # Flask app 2
   app2:
