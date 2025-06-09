@@ -49,8 +49,8 @@ services:
     networks:
       - frontend_net
     environment:
-      - TELEGRAM_CHAT_ID="687750651"
-      - TELEGRAM_BOT_TOKEN="7640872917:AAHyUf7cHES-oWY7jt96xcp1Ob0wYg-Lfi0"
+      - TELEGRAM_CHAT_ID=""
+      - TELEGRAM_BOT_TOKEN=""
 
 
   # Grafana
