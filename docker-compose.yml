@@ -1,5 +1,3 @@
-
-
 services:
   # Das ist Traefik Reverse Proxy
   traefik:
@@ -17,25 +15,41 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+      - "8080:8080" 
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     user: root
     networks:
-      - web
-
-
+     - frontend_net
+     - app1_net
+     - app2_net
 
   # Das ist Prometheus
   prometheus:
     image: prom/prometheus:v2.29.2
     container_name: prometheus
     volumes: 
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+       - ./prometheus/rules.yml:/etc/prometheus/rules.yml 
     ports:
       - "9090:9090"
     networks:
-      - web
+      - frontend_net
+
+ # Alertmanager
+  alertmanager:
+    image: prom/alertmanager:v0.24.0
+    container_name: alertmanager
+    volumes:
+       - /home/jambo2/auto-deploy-stack/prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    networks:
+      - frontend_net
+    environment:
+      - TELEGRAM_CHAT_ID="687750651"
+      - TELEGRAM_BOT_TOKEN="7640872917:AAHyUf7cHES-oWY7jt96xcp1Ob0wYg-Lfi0"
+
 
   # Grafana
   grafana:
@@ -46,7 +60,7 @@ services:
     ports:
       - "3001:3000"
     networks:
-      - web
+      - frontend_net
 
   # Flask app 1
   app1: 
@@ -58,19 +72,15 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.app1.rule=Host(`app1.localhost`)" 
       - "traefik.http.services.app1.loadbalancer.server.port=5000"
-    networks: 
-      - web
-
-
-       # указываю среднее кол во лимит запросов ### регулирую лимит запросов 
       - "traefik.http.middlewares.app1-ratelimit.ratelimit.average=100"
       - "traefik.http.middlewares.app1-ratelimit.ratelimit.burst=50"
-
-      #подключ middleware к роутеру
       - "traefik.http.routers.app1.middlewares=app1-ratelimit@docker"
+    networks: 
+      - app1_net
+      
 
-  # Flask app 2
-  app2:
+
+  # Flask app2 app2:
     build: ./apps/app2
     container_name: app2
     environment:
@@ -79,9 +89,17 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.app2.rule=Host(`app2.localhost`)"
       - "traefik.http.services.app2.loadbalancer.server.port=5000"
+         # указываю среднее кол во лимит запросов ### регулирую лимит запросов 
+      - "traefik.http.middlewares.app2-ratelimit.ratelimit.average=100"
+      - "traefik.http.middlewares.app2-ratelimit.ratelimit.burst=50"
+      - "traefik.http.routers.app2.middlewares=app2-ratelimit@docker"
     networks:
-      - web
+      - app2_net
+      
+
 
 networks:
-  web:
-    external: false
+  frontend_net:
+  app1_net:
+  app2_net:
+  
