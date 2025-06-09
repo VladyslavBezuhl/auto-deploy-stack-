@@ -1,3 +1,5 @@
+## для большей изолированости безопасности ресурсов размещаю их в разных network frontend_net , app1_net , app2_net
+
 services:
   # Das ist Traefik Reverse Proxy
   traefik:
